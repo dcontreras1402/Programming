@@ -52,17 +52,18 @@ def colocar_barcos(tablero, n, aleatorio=True):
                 print("Ya hay un barco en esa posición, intenta nuevamente.")
 
 def ataque(tablero, fila, col):
-    """Procesa un ataque y devuelve True si acertó"""
-    if tablero[fila][col] == "B":
+    """Procesa un ataque y devuelve True, False, o None"""
+    if tablero[fila][col] == "O" or tablero[fila][col] == "X":
+        return None  # Casilla ya atacada
+    elif tablero[fila][col] == "B":
         tablero[fila][col] = "X"  # Barco hundido
         return True
     elif tablero[fila][col] == "~":
-        tablero[fila][col] = "O"  # Agua
+        tablero[fila][col] = "O" # Agua
         return False
-    return False  # Si ya estaba atacado
 
-def contar_barcos(tablero):
-    """Cuenta los barcos que siguen vivos en un tablero"""
+def contar_barcos_vivos(tablero):
+    """Cuenta los barcos que no han sido impactados"""
     return sum(fila.count("B") for fila in tablero)
 
 def juego():
@@ -78,7 +79,7 @@ def juego():
 
     ganador = None
 
-    while contar_barcos(tablero_jugador) > 0 and contar_barcos(tablero_maquina) > 0:
+    while contar_barcos_vivos(tablero_jugador) > 0 and contar_barcos_vivos(tablero_maquina) > 0:
         print("\nTABLERO DEL JUGADOR")
         mostrar_tablero(tablero_jugador)
 
@@ -98,12 +99,16 @@ def juego():
             print("Coordenadas fuera de rango, turno perdido.")
             continue
 
-        if ataque(tablero_maquina, fila, col):
+        resultado_ataque = ataque(tablero_maquina, fila, col)
+        if resultado_ataque is True:
             print("¡Acertaste!")
-        else:
+        elif resultado_ataque is False:
             print("Fallaste")
-
-        if contar_barcos(tablero_maquina) == 0:
+        elif resultado_ataque is None:
+            print("Ya has atacado esas coordenadas. Pierdes el turno.")
+            continue
+    
+        if contar_barcos_vivos(tablero_maquina) == 0:
             ganador = "Jugador"
             break
     
@@ -116,7 +121,7 @@ def juego():
         else:
             print(f"La máquina falló en ({filaM}, {colM})")
 
-        if contar_barcos(tablero_jugador) == 0:
+        if contar_barcos_vivos(tablero_jugador) == 0:
             ganador = "Máquina"
             break
     
