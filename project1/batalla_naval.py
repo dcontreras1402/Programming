@@ -1,4 +1,3 @@
-import os
 import random
 
 # Constantes
@@ -114,9 +113,14 @@ def juego():
     
         # Turno máquina
         print("\nTurno de la máquina...")
-        filaM, colM = random.randint(0, TAM-1), random.randint(0, TAM-1)
-
-        if ataque(tablero_jugador, filaM, colM):
+        
+        while True:
+            filaM, colM = random.randint(0, TAM-1), random.randint(0, TAM-1)
+            resultado_ataque_maquina = ataque(tablero_jugador, filaM, colM)
+            if resultado_ataque_maquina is not None:
+                break
+        
+        if resultado_ataque_maquina is True:
             print(f"La máquina acertó en ({filaM}, {colM})")
         else:
             print(f"La máquina falló en ({filaM}, {colM})")
